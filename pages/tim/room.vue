@@ -24,6 +24,25 @@
 								<view v-if="item.type==TIM.TYPES.MSG_TEXT" class="bubble">
 									<rich-text :nodes="nodesFliter(item.payload.text)"></rich-text>
 								</view>
+								<!-- 图片消息 -->
+								<view v-if="item.type==TIM.TYPES.MSG_IMAGE" class="bubble">
+									<image @tap="previmg" :data-url="item.payload.imageInfoArray[0].imageUrl"
+									 :src="item.payload.imageInfoArray[0].imageUrl" mode="aspectFill"
+										style="width: 64px;height: 64px;"></image>
+								</view>
+								<!-- 自定义消息 -->
+								<view v-if="item.type==TIM.TYPES.MSG_CUSTOM" class="bubble">
+									<view v-if="item.payload.data=='custom'">{{item.payload.data}}</view>
+									<view v-if="item.payload.data=='custom'">{{item.payload.description}}</view>
+									<view v-if="item.payload.data=='custom'">{{item.payload.extension}}</view>
+									<view v-if="item.payload.data=='custom1'">
+										<!-- {{JSON.parse(item.payload.extension)}} -->
+										{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}
+										{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}
+										{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}
+										{{'自定义参数4:'+getarg(item.payload.extension,'a3',item.payload.data)}}
+									</view>
+								</view>
 							</view>
 							<!-- 右-头像 -->
 							<view class="right">
@@ -45,6 +64,17 @@
 								<!-- 文字消息 -->
 								<view v-if="item.type==TIM.TYPES.MSG_TEXT" class="bubble">
 									<rich-text :nodes="nodesFliter(item.payload.text)"></rich-text>
+								</view>
+								<!-- 图片消息 -->
+								<view v-if="item.type==TIM.TYPES.MSG_IMAGE" class="bubble">
+									<image @tap="previmg" :data-url="item.payload.imageInfoArray[0].imageUrl"
+									 :src="item.payload.imageInfoArray[0].imageUrl" mode="aspectFill"
+										style="width: 64px;height: 64px;"></image>
+								</view>
+								<view v-if="item.type==TIM.TYPES.MSG_CUSTOM" class="bubble">
+									<view>{{item.payload.data}}</view>
+									<view>{{item.payload.description}}</view>
+									<view>{{item.payload.extension}}</view>
 								</view>
 							</view>
 						</view>
@@ -73,6 +103,9 @@
 					</view>
 					<view class="box" @tap="handRedEnvelopes">
 						<view class="icon hongbao"></view>
+					</view>
+					<view class="box" @tap="customModal">
+						<view class="iconfont icon-zidingyi"></view>
 					</view>
 				</view>
 			</view>
@@ -139,6 +172,9 @@
 			</view>
 			
 		</view>
+		
+		
+		
 	</view>
 </template>
 <script>
@@ -206,7 +242,14 @@
 					face:null,
 					blessing:null,
 					money:null
-				}
+				},
+				
+				
+				customModalVisible: false,
+				customData: '',
+				customDescription: '',
+				customExtension: '',
+				focusedInput: '',
 			};
 		},
 		computed:{
@@ -265,6 +308,25 @@
 			});
 		},
 		methods:{
+			getarg(str,arg,type){
+				if(type=='custom'){
+					return
+				}
+				if(!str){
+					return
+				}
+				console.log(str)
+				var reg = /\\$/gi
+				str = str.replace(reg, '')
+				console.log(str)
+				var jsonstr=JSON.parse(str)
+				console.log(jsonstr)
+				if(jsonstr.hasOwnProperty(arg)){
+				
+					console.log(jsonstr[arg]);
+					return jsonstr[arg]
+				}
+			},
 			//聊天的节点加上外层的div
 			nodesFliter(str){
 				let nodeStr = '<div style="align-items: center;word-wrap:break-word;">'+str+'</div>' 
@@ -393,22 +455,27 @@
 			},
 			//选照片 or 拍照
 			getImage(type){
-				this.hideDrawer();
+				var that =this
+				that.hideDrawer();
 				uni.chooseImage({
 					sourceType:[type],
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					count: 1,
 					success: (res)=>{
-						for(let i=0;i<res.tempFilePaths.length;i++){
+						that.sendMsg(res,'img');
+						return
+						/*for(let i=0;i<res.tempFilePaths.length;i++){
 							uni.getImageInfo({
 								src: res.tempFilePaths[i],
 								success: (image)=>{
+									console.log(image)
 									console.log(image.width);
 									console.log(image.height);
 									let msg = {url:res.tempFilePaths[i],w:image.width,h:image.height};
-									this.sendMsg(msg,'img');
+									that.sendMsg(msg,'img');
 								}
 							});
-						}
+						}*/
 					}
 				});
 			},
@@ -468,21 +535,51 @@
 			
 			// 发送消息
 			sendMsg(content,type){
-				let message = this.tim.createTextMessage({
-				  to: this.toUserId,
-				  conversationType: 'C2C',
-				  payload: {
-				    text: content.text
-				  }
-				});	
+				console.log('????')
+				let message
+				console.log(type)
+				if(type=='custom'){
+					message = this.tim.createCustomMessage({
+					  to: this.toUserId,
+					  conversationType: 'C2C',
+					  payload: {
+					   data: content.data,//自定义消息的数据字段
+					   description: content.description,//自定义消息的说明字段
+					   extension: content.extension,//自定义消息的扩展字段
+					  }
+					});	
+				}else	if(type=='img'){
+					message = this.tim.createImageMessage({
+					  to: this.toUserId,
+					  conversationType: 'C2C',
+					  payload: {
+					    file: content
+					  }
+					});	
+				}else{
+					message = this.tim.createTextMessage({
+					  to: this.toUserId,
+					  conversationType: 'C2C',
+					  payload: {
+					    text: content.text
+					  }
+					});	
+				}
+				
+				console.log('????1')
 				this.$store.commit('pushCurrentMessageList', message)
 				let pomise = this.tim.sendMessage(message)
-				pomise.then(res=>{
-					this.$nextTick(()=> {
-						// 滚动到底
-						this.scrollToView = res.data.message.ID
-					});
-				})	
+				pomise.then(
+					(res)=>{
+						this.$nextTick(()=> {
+							// 滚动到底
+							this.scrollToView = res.data.message.ID
+						});
+					},
+					(err)=>{
+						console.log(err)
+					}
+				)	
 			},
 			
 			// 添加文字消息到列表
@@ -662,6 +759,59 @@
 			},
 			discard(){
 				return;
+			},
+			customModal () {
+				var that=this
+			  uni.showModal({
+			      title: '提示',
+			      content: '是否发送自定义消息',
+			      success: function (res) {
+			          if (res.confirm) {
+			              console.log('用户点击确定');
+										var ext={
+											a:'a',
+											a1:'a1',
+											a2:'a2',
+											a3:'a3',
+										}
+										ext=JSON.stringify(ext)
+										var msg={
+											data:'custom1',
+											description:'自定义消息的说明字段',
+											extension:ext
+										}
+										that.sendMsg(msg,'custom')
+			          } else if (res.cancel) {
+			              console.log('用户点击取消');
+			          }
+			      }
+			  });
+			},
+			
+			// 选项卡关闭
+			handleClose () {
+			  this.rateModal = false
+			  this.isFocus = false
+			  this.isMoreOpen = false
+			  this.isEmojiOpen = false
+			},
+			previmg(e){
+				console.log(e)
+				var urls=[]
+				urls.push(e.currentTarget.dataset.url)
+				// return
+				uni.previewImage({
+						urls: urls,
+						longPressActions: {
+								itemList: ['发送给朋友', '保存图片', '收藏'],
+								success: function(data) {
+										console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+								},
+								fail: function(err) {
+										console.log(err.errMsg);
+								}
+						}
+				});
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 import TIM from 'tim-wx-sdk';
-// import COS from "cos-js-sdk-v5";
+import COS from "cos-wx-sdk-v5";
 
 
 const options = {
@@ -9,7 +9,7 @@ const options = {
 const tim = TIM.create(options); // SDK 实例通常用 tim 表示
 const TIMData = TIM
 // 注册 COS SDK 插件
-// tim.registerPlugin({'cos-js-sdk': COS});
+tim.registerPlugin({'cos-wx-sdk': COS});
 
 
 

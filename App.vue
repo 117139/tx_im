@@ -14,6 +14,8 @@
 			this.tim.on(this.$TIM.EVENT.CONVERSATION_LIST_UPDATED, event => {
 				this.$store.commit("updateConversationList", event.data);
 			});
+			// 注册 COS SDK 插件
+			// this.tim.registerPlugin({'cos-wx-sdk': this.COS});
 		},
 		methods: {
 			onReadyStateUpdate({name}) {
@@ -46,4 +48,25 @@
 
 <style>
 	/*每个页面公共css */
+	@font-face {font-family: "iconfont";
+	  src: url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.eot?t=1593582465065'); /* IE9 */
+	  src: url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.eot?t=1593582465065#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAANQAAsAAAAABxwAAAMEAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCCcAqCJIIEATYCJAMICwYABCAFhG0HMhssBhHVk9Nkf4BMbvUD0qAjGxNrGFuHHsLed4eH/xmDV84J0BSuggQAAAAACB74/dWf+57vzIKI2wHlTeu0dRuUADczgvEj/gbmIQAudz82PzYBt7aBAm4bhhhY4GOCZnbb3UzT+CxlR2gmKU1pNE0Ka93Izc75QO9TgbSA4gTSAosC/natpf32QzwU4kLCE1k0ueyO4/ne0ESnNOIP9bfL8ne+EpkOgEQYml84nHau2B1QbvfQexcDjL8GeN6jKNECySC3hrGbCBzCfggghUslFqvBGHIaMEwAcdrrA+Q5C41m+S2CUTM3jhQTwgoHlEcM8s+Ldy8gQKFHgKSKTfMMk9sVBkUf12BSBKz5VIC1CFSQCjSIda2mTCQ9qVQy8MSisa94gW//f8rc7R8PBEQKiHUCCFWZ98TC7FvNUgBo7r29HlpHBYHeDXaC30lHbW+NODBnR98tKWvrN7dc2pilUx69NxPg4sf4JewxxanjfoFej1MLC/dVLmAyQLSJtu/pORwfdXQ1/l368nI1n642E9rFTMP5F12Ehou/ntwR+JHdhenQrs9D6V/h+yRUnKUjsrPkr9nJ590oja9dvKL3ua7VuD1Png8NE/Af5Lg1h+d5zr/PqCWCwSYALosj1eZ/f4eKy6+346v/HBoAnzRGzu6ng3VXWoG/K4wnUmjtkAM8Sgy0FAqgqJfcdZ4kgYs0g7evY6V+rxIQLH4vpDOFpaCyxCI1bCroHNLAYEkHKUX+Ygcf7SIitoFkPQoInrZB4e4aVJ6ekBr2C+j8fQeDZwCDVBfIazrEB5jJxnQQOuPxhebkuQrJJSvih6Rv9oGzHE6aEofGjuVCqehvk0s8x4TwrisiChV7DraUw8i2PfTZu9JJChcRv14sqronFU6eA1mI6SB0xuMLzclzFa0u2dL7h6Rv9oFbygb0U+LQdI7lQqkHsi10e5XdyyPhXVdEFCr2HGwpKrKhx0O/vteVTlK4jHD59aJWSfUVFtYXO1+3BoAsAFk0ArtHvM3ZuPplAAA=') format('woff2'),
+	  url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.woff?t=1593582465065') format('woff'),
+	  url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.ttf?t=1593582465065') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+	  url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.svg?t=1593582465065#iconfont') format('svg'); /* iOS 4.1- */
+	}
+	
+	.iconfont {
+	  font-family: "iconfont" !important;
+	  font-size:56upx;
+	  font-style:normal;
+	  color: #333;
+	  -webkit-font-smoothing: antialiased;
+	  -moz-osx-font-smoothing: grayscale;
+	}
+	
+	.icon-zidingyi:before {
+	  content: "\e6d3";
+	}
 </style>
