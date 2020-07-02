@@ -28,13 +28,16 @@
   width: 80%;
   margin: 0 auto;
 }
-.text-box.data-v-668a2252 {
+.text-box input.data-v-668a2252 {
   height: 80rpx;
   border-bottom: 1px solid #EEEEEE;
   margin: 20rpx 0;
   font-size: 28rpx;
   color: #f66;
   line-height: 80rpx;
+}
+.text-box input.data-v-668a2252:focus {
+  border-bottom: 1px solid #f06c7a;
 }
 .msg-box.data-v-668a2252 {
   margin: 50rpx 0;

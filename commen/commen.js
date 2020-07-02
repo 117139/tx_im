@@ -430,7 +430,8 @@ commen.dateTimeFliter = function(time, part = 0, dateComplete = true, timeComple
 			second = '0' + second
 		}
 	}
-	timeStr = hour + timeConnector + minute + timeConnector + second
+	// timeStr = hour + timeConnector + minute + timeConnector + second
+	timeStr = hour + timeConnector + minute 
 	//合成输出值
 	if (part == 0) {
 		return dateStr + ' ' + timeStr

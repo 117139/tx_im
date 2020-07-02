@@ -1,8 +1,10 @@
 <template>
 	<view>
 		<view class="content" @touchstart="hideDrawer">
-			<scroll-view class="msg-list" scroll-y="true" :scroll-with-animation="scrollAnimation" :scroll-top="scrollTop"
-			 :scroll-into-view="scrollToView" @scrolltoupper="loadHistory" upper-threshold="50">
+			<!-- <scroll-view class="msg-list" scroll-y="true" :scroll-with-animation="scrollAnimation" :scroll-top="scrollTop"
+			 :scroll-into-view="scrollToView" @scrolltoupper="loadHistory" upper-threshold="50"> -->
+			 <view class="msg-list">
+				<view class="msg-list1">
 				<!-- 加载历史数据waitingUI -->
 				<view class="loading" v-if="isHistoryLoading">
 					<view class="spinner">
@@ -42,6 +44,16 @@
 										{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}
 										{{'自定义参数4:'+getarg(item.payload.extension,'a3',item.payload.data)}}
 									</view>
+									<view v-if="item.payload.data=='custom_good'"  class="chat_box" @tap="jump" :data-url="getarg(item.payload.extension,'a2',item.payload.data)">
+										<image class="chat_img" :src="getarg(item.payload.extension,'a3',item.payload.data)"
+										 mode="aspectFill" style="width: 64px;height: 64px;"></image>
+										<view class="chat_msg">
+											<view class="gb_name oh1">{{item.payload.description}}</view>
+											<view class="gb_msg  oh1">{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view>
+										</view>
+									</view>
 								</view>
 							</view>
 							<!-- 右-头像 -->
@@ -59,7 +71,10 @@
 							<view class="right">
 								<view class="username">
 									<view class="name">{{toUserInfo.user}}</view>
-									<view class="time">{{timeFliter(item.time)}}</view>
+									<view class="time" v-if="index==0">{{timeFliter(item.time)}}</view>
+									<!-- <view v-else-if="timeFliter(item.time)!=timeFliter(msgList[index-1].time)"></view> -->
+									<view v-else>{{timeFliter(msgList[index-1].time)}}</view>
+									<view style="color: rgba(0,0,0,0);">{{toUserInfo.user}}</view>
 								</view>
 								<!-- 文字消息 -->
 								<view v-if="item.type==TIM.TYPES.MSG_TEXT" class="bubble">
@@ -72,15 +87,34 @@
 										style="width: 64px;height: 64px;"></image>
 								</view>
 								<view v-if="item.type==TIM.TYPES.MSG_CUSTOM" class="bubble">
-									<view>{{item.payload.data}}</view>
-									<view>{{item.payload.description}}</view>
-									<view>{{item.payload.extension}}</view>
+									<view v-if="item.payload.data=='custom'">{{item.payload.data}}</view>
+									<view v-if="item.payload.data=='custom'">{{item.payload.description}}</view>
+									<view v-if="item.payload.data=='custom'">{{item.payload.extension}}</view>
+									<view v-if="item.payload.data=='custom1'">
+										<!-- {{JSON.parse(item.payload.extension)}} -->
+										{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}
+										{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}
+										{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}
+										{{'自定义参数4:'+getarg(item.payload.extension,'a3',item.payload.data)}}
+									</view>
+									<view v-if="item.payload.data=='custom_good'"  class="chat_box" @tap="jump" :data-url="getarg(item.payload.extension,'a2',item.payload.data)">
+										<image class="chat_img" :src="getarg(item.payload.extension,'a3',item.payload.data)"
+										 mode="aspectFill" style="width: 64px;height: 64px;"></image>
+										<view class="chat_msg">
+											<view class="gb_name oh1">{{item.payload.description}}</view>
+											<view class="gb_msg oh1">{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view>
+										</view>
+									</view>
 								</view>
 							</view>
 						</view>
 					</block>
 				</view>
-			</scroll-view>
+			<!-- </scroll-view> -->
+			</view>
+			</view>
 		</view>
 		<!-- 抽屉栏 -->
 		<view class="popup-layer" :class="popupLayerClass" @touchmove.stop.prevent="discard">
@@ -114,9 +148,9 @@
 		<view class="input-box" :class="popupLayerClass" @touchmove.stop.prevent="discard">
 			<!-- H5下不能录音，输入栏布局改动一下 -->
 			<!-- #ifndef H5 -->
-			<view class="voice">
+			<!-- <view class="voice">
 				<view class="icon" :class="isVoice?'jianpan':'yuyin'" @tap="switchVoice"></view>
-			</view>
+			</view> -->
 			<!-- #endif -->
 			<!-- #ifdef H5 -->
 			<view class="more" @tap="showMore">
@@ -127,8 +161,17 @@
 				<view class="voice-mode" :class="[isVoice?'':'hidden',recording?'recording':'']" @touchstart="voiceBegin"
 				 @touchmove.stop.prevent="voiceIng" @touchend="voiceEnd" @touchcancel="voiceCancel">{{voiceTis}}</view>
 				<view class="text-mode" :class="isVoice?'hidden':''">
-					<view class="box">
-						<textarea auto-height="true" v-model="textMsg" @focus="textareaFocus" />
+					<view class="box" style="flex: 1;">
+						<!-- <textarea auto-height="true" v-model="textMsg" @focus="textareaFocus" cursor-spacing="18" /> -->
+						<input type="text"
+						       class="input"
+						       v-model.lazy:value="textMsg"
+						       confirm-type="send"
+						       :focus="isFocus"
+						       @focus="isFocus = true"
+						       @blur="isFocus = false"
+						       @confirm='sendText'
+									 cursor-spacing="18"/>
 						</view>
 					<view class="em" @tap="chooseEmoji">
 						<view class="icon biaoqing"></view>
@@ -250,6 +293,9 @@
 				customDescription: '',
 				customExtension: '',
 				focusedInput: '',
+				
+				
+				isShow: false,
 			};
 		},
 		computed:{
@@ -293,8 +339,13 @@
 			// #endif
 		},
 		onShow(){
-			this.scrollTop = 9999999;
-			this.isHistoryLoading = false;
+			var that =this
+			that.isShow = true
+			setTimeout(function (){
+				that.scrollToBottom()
+				that.scrollTop = 99999999999999;
+				that.isHistoryLoading = false;
+			},500)
 		},
 		onUnload(){
 			//退出页面 将所有的会话内的消息设置为已读
@@ -307,7 +358,27 @@
 			  console.warn('setMessageRead error:', imError);
 			});
 		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
+		},
 		methods:{
+			jump(e){
+				console.log(e)
+				uni.navigateTo({
+					url:e.currentTarget.dataset.url
+				})
+			},
+			onPullDownRefresh: function () {
+			  uni.stopPullDownRefresh();
+			},
+			// 滚动到列表bottom
+			scrollToBottom () {
+			  if (this.isShow) {
+			    wx.pageScrollTo({
+			      scrollTop: 9999999
+			    })
+			  }
+			},
 			getarg(str,arg,type){
 				if(type=='custom'){
 					return
@@ -329,7 +400,7 @@
 			},
 			//聊天的节点加上外层的div
 			nodesFliter(str){
-				let nodeStr = '<div style="align-items: center;word-wrap:break-word;">'+str+'</div>' 
+				let nodeStr = '<div class="ltbox_div" style="word-wrap:break-word;line-height:40upx;">'+str+'</div>' 
 				return nodeStr
 			},
 			//时间过滤
@@ -337,6 +408,40 @@
 				let timeData = new Date(timer*1000)
 				let str = this.$commen.dateTimeFliter(timeData)		 
 				return str
+			},
+			getchattime(time) {
+			  if (!time) {
+			    return
+			  }
+			  var newYear = new Date().getFullYear();//目前系统时间是哪一年
+			  var nowMonth = new Date().getMonth() + 1;//目前系统时间是哪一月
+			  var nowDay = new Date().getDate();//目前系统时间是几号
+			  time = Number(time)
+			  var sendtime = new Date(time)
+			  var sendYear = sendtime.getFullYear()
+			  var sendMonth = sendtime.getMonth() + 1
+			  var sendDate = sendtime.getDate()
+			  var sendHours = sendtime.getHours()
+			  var sendMinutes = sendtime.getMinutes()
+			  if (sendMinutes < 10) {
+			    sendMinutes = '0' + sendMinutes
+			  }
+			  // console.log(time)
+			  console.log(sendtime)
+			  // console.log(sendtime.getDate())
+			  if (sendYear == newYear) {
+			
+			    // console.log(sendDate, nowDay)
+			    if (sendDate == nowDay) {
+			
+			      return sendHours + ':' + sendMinutes
+			    }
+			
+			
+			    return sendMonth + '-' + sendDate + ' ' + sendHours + ':' + sendMinutes
+			  } else {
+			    return sendYear + '-' + sendMonth + '-' + sendDate + ' ' + sendHours + ':' + sendMinutes
+			  }
 			},
 			// 接受消息(定位消息)
 			screenMsg(newVal,oldVal){
@@ -523,7 +628,7 @@
 								//在线表情路径，图文混排必须使用网络路径，请上传一份表情到你的服务器后再替换此路径 
 								//比如你上传服务器后，你的100.gif路径为https://www.xxx.com/emoji/100.gif 则替换onlinePath填写为https://www.xxx.com/emoji/
 								let onlinePath = 'https://s2.ax1x.com/2019/04/12/'
-								let imgstr = '<img src="'+onlinePath+this.onlineEmoji[EM.url]+'">';
+								let imgstr = '<img class="emoji_i" src="'+onlinePath+this.onlineEmoji[EM.url]+'">';
 								console.log("imgstr: " + imgstr);
 								return imgstr;
 							}
@@ -574,6 +679,7 @@
 						this.$nextTick(()=> {
 							// 滚动到底
 							this.scrollToView = res.data.message.ID
+							this.scrollToBottom()
 						});
 					},
 					(err)=>{
@@ -771,12 +877,12 @@
 										var ext={
 											a:'a',
 											a1:'a1',
-											a2:'a2',
-											a3:'a3',
+											a2:'/pages/index/index',
+											a3:'http://119.90.34.147:8080/finance/img/system/touxiang.jpg',
 										}
 										ext=JSON.stringify(ext)
 										var msg={
-											data:'custom1',
+											data:'custom_good',
 											description:'自定义消息的说明字段',
 											extension:ext
 										}
@@ -818,4 +924,41 @@
 </script>
 <style lang="scss">
 	@import "@/static/HM-chat/css/style.scss"; 
+	.msg-list{
+		// padding-bottom: 140px;
+		
+	}
+	.msg-list1{
+		width: 100%;
+		padding-bottom: 100upx;
+	}
+	.chat_box{
+		width: 400upx;
+		display: flex;
+	}
+	.chat_img{
+		width: 120upx;
+		height: 120upx;
+		margin-right: 20upx;
+	}
+	.chat_msg{
+		display: flex;
+		flex-direction: column;
+	}
+	.gb_name{
+		font-size: 28upx;
+	}
+	.gb_msg{
+		font-size: 22upx;
+	}
+	.ltbox_div{
+		line-height: 45upx;
+	}
+	.emoji_i{
+		height: 40upx;
+		width: 40upx;
+		padding: 2upx;
+		box-sizing: border-box;
+		vertical-align: text-bottom;
+	}
 </style>

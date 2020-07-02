@@ -75,6 +75,9 @@
 				isActive: 0, //默认聊天记录
 			}
 		},
+		onShow() {
+			uni.hideHomeButton()
+		},
 		computed: {
 			...mapState({
 				isLogin: state => state.isLogin,

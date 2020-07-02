@@ -99,13 +99,18 @@
 		margin: 0 auto;
 	}
 
-	.text-box {
+	
+	.text-box input{
 		height: 80rpx;
 		border-bottom: 1px solid #EEEEEE;
 		margin: 20rpx 0;
 		font-size: 28rpx;
 		color: #f66;
 		line-height: 80rpx;
+	}
+	.text-box input:focus{
+		
+		border-bottom: 1px solid #f06c7a;
 	}
 	.msg-box{
 		margin:50rpx 0;

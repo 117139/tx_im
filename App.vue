@@ -56,7 +56,10 @@
 	  url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.ttf?t=1593582465065') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
 	  url('//at.alicdn.com/t/font_1915959_b8ykr7g4c2.svg?t=1593582465065#iconfont') format('svg'); /* iOS 4.1- */
 	}
-	
+	image{
+		width: auto;
+		height: auto;
+	}
 	.iconfont {
 	  font-family: "iconfont" !important;
 	  font-size:56upx;
@@ -68,5 +71,32 @@
 	
 	.icon-zidingyi:before {
 	  content: "\e6d3";
+	}
+	/*多余显示省略号*/
+	.oh1 {
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+	}
+	
+	.oh2 {
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+	
+	.oh3 {
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
 	}
 </style>

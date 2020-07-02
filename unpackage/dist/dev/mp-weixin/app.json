@@ -6,6 +6,7 @@
   ],
   "subPackages": [],
   "window": {
+    "enablePullDownRefresh": true,
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
     "navigationBarBackgroundColor": "#F8F8F8",

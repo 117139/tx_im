@@ -277,6 +277,9 @@ page {
 .input-box .textbox .text-mode .box textarea {
   width: 100%;
 }
+.input-box .textbox .text-mode .box input {
+  width: 100%;
+}
 .input-box .textbox .text-mode .em {
   -webkit-flex-shrink: 0;
           flex-shrink: 0;
@@ -640,8 +643,8 @@ page {
           justify-content: flex-end;
 }
 .content .msg-list .row .my .left .bubble {
-  background-color: #f06c7a;
-  color: #fff;
+  background-color: #fff;
+  color: #333;
 }
 .content .msg-list .row .my .left .bubble.voice .icon {
   color: #fff;
@@ -698,6 +701,10 @@ page {
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  padding-right: 130rpx;
 }
 .content .msg-list .row .other .right .username .name {
   margin-right: 50rpx;
@@ -856,5 +863,45 @@ page {
 .open-redenvelope .showDetails .icon {
   font-size: 26rpx;
   color: #f8d757;
+}
+.msg-list1 {
+  width: 100%;
+  padding-bottom: 100rpx;
+}
+.chat_box {
+  width: 400rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.chat_img {
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+}
+.chat_msg {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+          flex-direction: column;
+}
+.gb_name {
+  font-size: 28rpx;
+}
+.gb_msg {
+  font-size: 22rpx;
+}
+.ltbox_div {
+  line-height: 45rpx;
+}
+.emoji_i {
+  height: 40rpx;
+  width: 40rpx;
+  padding: 2rpx;
+  box-sizing: border-box;
+  vertical-align: text-bottom;
 }
 

@@ -189,6 +189,9 @@ page{
 				textarea{
 					width: 100%;
 				}
+				input{
+					width: 100%;
+				}
 			}
 			.em{
 				flex-shrink: 0;
@@ -426,8 +429,10 @@ page{
 					align-items: center;
 					justify-content: flex-end;
 					.bubble{
-						background-color: #f06c7a;
-						color: #fff;
+						// background-color: #f06c7a;
+						background-color: #fff;
+						// color: #fff;
+						color: #333;
 						
 						&.voice{
 							.icon{
@@ -472,6 +477,8 @@ page{
 						font-size: 24upx;
 						color: #999;
 						display: flex;
+						justify-content: space-between;
+						padding-right: 130upx;
 						.name{
 							margin-right: 50upx;
 						}
