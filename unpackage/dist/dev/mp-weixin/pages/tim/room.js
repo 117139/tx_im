@@ -633,7 +633,7 @@ var _vuex = __webpack_require__(/*! vuex */ 17);function _interopRequireDefault(
       if (sendYear == newYear) {
 
         // console.log(sendDate, nowDay)
-        if (sendDate == nowDay) {
+        if (sendMonth == nowMonth && sendDate == nowDay) {
 
           return sendHours + ':' + sendMinutes;
         }

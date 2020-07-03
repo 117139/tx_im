@@ -432,7 +432,7 @@
 			  if (sendYear == newYear) {
 			
 			    // console.log(sendDate, nowDay)
-			    if (sendDate == nowDay) {
+			    if (sendMonth==nowMonth&&sendDate == nowDay) {
 			
 			      return sendHours + ':' + sendMinutes
 			    }
