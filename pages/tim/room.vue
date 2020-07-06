@@ -73,7 +73,8 @@
 									<view class="name">{{toUserInfo.user}}</view>
 									<view class="time" v-if="index==0">{{timeFliter(item.time)}}</view>
 									<!-- <view v-else-if="timeFliter(item.time)!=timeFliter(msgList[index-1].time)"></view> -->
-									<view v-else>{{timeFliter(msgList[index-1].time)}}</view>
+									<!-- <view v-else-if="index>0">{{timeFliter(msgList[index-1].time)}}</view> -->
+									<view v-else-if="index>0">{{gettime1(index-1)}}</view>
 									<view style="color: rgba(0,0,0,0);">{{toUserInfo.user}}</view>
 								</view>
 								<!-- 文字消息 -->
@@ -362,6 +363,18 @@
 			uni.stopPullDownRefresh();
 		},
 		methods:{
+			gettime1(idx){
+				if(idx<0){
+					return
+				}
+				console.log(idx,idx+1)
+				var time=this.msgList[idx].time
+				var time1=this.msgList[idx+1].time
+				console.log(this.getchattime(time),this.getchattime(time1))
+				if(this.getchattime(time)!=this.getchattime(time1)){
+					return this.getchattime(time1)
+				}
+			},
 			jump(e){
 				console.log(e)
 				uni.navigateTo({
@@ -386,15 +399,15 @@
 				if(!str){
 					return
 				}
-				console.log(str)
+				// console.log(str)
 				var reg = /\\$/gi
 				str = str.replace(reg, '')
-				console.log(str)
+				// console.log(str)
 				var jsonstr=JSON.parse(str)
-				console.log(jsonstr)
+				// console.log(jsonstr)
 				if(jsonstr.hasOwnProperty(arg)){
 				
-					console.log(jsonstr[arg]);
+					// console.log(jsonstr[arg]);
 					return jsonstr[arg]
 				}
 			},
@@ -416,7 +429,7 @@
 			  var newYear = new Date().getFullYear();//目前系统时间是哪一年
 			  var nowMonth = new Date().getMonth() + 1;//目前系统时间是哪一月
 			  var nowDay = new Date().getDate();//目前系统时间是几号
-			  time = Number(time)
+			  time = Number(time*1000)
 			  var sendtime = new Date(time)
 			  var sendYear = sendtime.getFullYear()
 			  var sendMonth = sendtime.getMonth() + 1

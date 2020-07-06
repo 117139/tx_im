@@ -97,8 +97,6 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  var m11 = _vm.timeFliter(_vm.msgList[_vm.index - 1].time)
-
   var l0 = _vm.__map(_vm.msgList, function(item, index) {
     var m0 = _vm.nodesFliter(item.payload.text)
     var m1 = _vm.getarg(item.payload.extension, "a", item.payload.data)
@@ -111,6 +109,7 @@ var render = function() {
     var m8 = _vm.getarg(item.payload.extension, "a1", item.payload.data)
     var m9 = _vm.getarg(item.payload.extension, "a2", item.payload.data)
     var m10 = _vm.timeFliter(item.time)
+    var m11 = _vm.gettime1(index - 1)
     var m12 = _vm.nodesFliter(item.payload.text)
     var m13 = _vm.getarg(item.payload.extension, "a", item.payload.data)
     var m14 = _vm.getarg(item.payload.extension, "a1", item.payload.data)
@@ -134,6 +133,7 @@ var render = function() {
       m8: m8,
       m9: m9,
       m10: m10,
+      m11: m11,
       m12: m12,
       m13: m13,
       m14: m14,
@@ -161,7 +161,6 @@ var render = function() {
     {},
     {
       $root: {
-        m11: m11,
         l0: l0
       }
     }
@@ -200,6 +199,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+
 
 
 
@@ -563,6 +563,18 @@ var _vuex = __webpack_require__(/*! vuex */ 17);function _interopRequireDefault(
     uni.stopPullDownRefresh();
   },
   methods: {
+    gettime1: function gettime1(idx) {
+      if (idx < 0) {
+        return;
+      }
+      console.log(idx, idx + 1);
+      var time = this.msgList[idx].time;
+      var time1 = this.msgList[idx + 1].time;
+      console.log(this.getchattime(time), this.getchattime(time1));
+      if (this.getchattime(time) != this.getchattime(time1)) {
+        return this.getchattime(time1);
+      }
+    },
     jump: function jump(e) {
       console.log(e);
       uni.navigateTo({
@@ -587,15 +599,15 @@ var _vuex = __webpack_require__(/*! vuex */ 17);function _interopRequireDefault(
       if (!str) {
         return;
       }
-      console.log(str);
+      // console.log(str)
       var reg = /\\$/gi;
       str = str.replace(reg, '');
-      console.log(str);
+      // console.log(str)
       var jsonstr = JSON.parse(str);
-      console.log(jsonstr);
+      // console.log(jsonstr)
       if (jsonstr.hasOwnProperty(arg)) {
 
-        console.log(jsonstr[arg]);
+        // console.log(jsonstr[arg]);
         return jsonstr[arg];
       }
     },
@@ -617,7 +629,7 @@ var _vuex = __webpack_require__(/*! vuex */ 17);function _interopRequireDefault(
       var newYear = new Date().getFullYear(); //目前系统时间是哪一年
       var nowMonth = new Date().getMonth() + 1; //目前系统时间是哪一月
       var nowDay = new Date().getDate(); //目前系统时间是几号
-      time = Number(time);
+      time = Number(time * 1000);
       var sendtime = new Date(time);
       var sendYear = sendtime.getFullYear();
       var sendMonth = sendtime.getMonth() + 1;
