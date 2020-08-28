@@ -75,5 +75,16 @@
     },
     "uniStatistics" : {
         "enable" : false
+    },
+    "h5" : {
+        "router" : {
+            "mode" : "hash",
+            "base" : "/suxin/51dy_pc/"
+        },
+        "devServer" : {
+            "https" : false
+        },
+        "title" : "51daiyan",
+        "domain" : "www.wanbonet.com"
     }
 }

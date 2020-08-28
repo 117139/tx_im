@@ -44,38 +44,38 @@
 										{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}
 										{{'自定义参数4:'+getarg(item.payload.extension,'a3',item.payload.data)}}
 									</view>
-									<view v-if="item.payload.data=='custom_good'"  class="chat_box" @tap="jump" :data-url="getarg(item.payload.extension,'a2',item.payload.data)">
+									<a v-if="item.payload.data=='custom_good'"  class="chat_box"  :href="IPurl_url+'/merchant/goods.Goods/look.html?id='+getarg(item.payload.extension,'a2',item.payload.data)">
 										<image class="chat_img" :src="getarg(item.payload.extension,'a3',item.payload.data)"
-										 mode="aspectFill" style="width: 64px;height: 64px;"></image>
+										 mode="aspectFill" style="width: 120px;height: 120px;"></image>
 										<view class="chat_msg">
-											<view class="gb_name oh1">{{item.payload.description}}</view>
-											<view class="gb_msg  oh1">{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
-											<view class="gb_msg oh1">{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}</view>
-											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view>
+											<view class="gb_name oh2">{{item.payload.description}}</view>
+											<view class="gb_msg  oh1">{{'￥'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
+											<!-- <view class="gb_msg oh1">{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view> -->
 										</view>
-									</view>
+									</a>
 								</view>
 							</view>
 							<!-- 右-头像 -->
 							<view class="right">
-								<image :src="userInfo.img"></image>
+								<image :src="userInfo.avatarurl"></image>
 							</view>
 						</view>
 						<!-- 别人发出的消息 -->
 						<view class="other" v-else>
 							<!-- 左-头像 -->
-							<view class="left">
-								<image :src="toUserInfo.img"></image>
+							<view v-if="toUserInfo" class="left">
+								<image :src="toUserInfo.head_portrait"></image>
 							</view>
 							<!-- 右-用户名称-时间-消息 -->
 							<view class="right">
 								<view class="username">
-									<view class="name">{{toUserInfo.user}}</view>
+									<view class="name"></view>
 									<view class="time" v-if="index==0">{{timeFliter(item.time)}}</view>
 									<!-- <view v-else-if="timeFliter(item.time)!=timeFliter(msgList[index-1].time)"></view> -->
 									<!-- <view v-else-if="index>0">{{timeFliter(msgList[index-1].time)}}</view> -->
-									<view v-else-if="index>0">{{gettime1(index-1)}}</view>
-									<view style="color: rgba(0,0,0,0);">{{toUserInfo.user}}</view>
+									<view class="time" v-else-if="index>0">{{gettime1(index-1)}}</view>
+									<view style="color: rgba(0,0,0,0);"></view>
 								</view>
 								<!-- 文字消息 -->
 								<view v-if="item.type==TIM.TYPES.MSG_TEXT" class="bubble">
@@ -98,16 +98,18 @@
 										{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}
 										{{'自定义参数4:'+getarg(item.payload.extension,'a3',item.payload.data)}}
 									</view>
-									<view v-if="item.payload.data=='custom_good'"  class="chat_box" @tap="jump" :data-url="getarg(item.payload.extension,'a2',item.payload.data)">
+									<a v-if="item.payload.data=='custom_good'"  class="chat_box" :href="IPurl_url+'/merchant/goods.Goods/look.html?id='+getarg(item.payload.extension,'a2',item.payload.data)">
 										<image class="chat_img" :src="getarg(item.payload.extension,'a3',item.payload.data)"
-										 mode="aspectFill" style="width: 64px;height: 64px;"></image>
+										 mode="aspectFill" style="width: 120px;height: 120px;"></image>
 										<view class="chat_msg">
-											<view class="gb_name oh1">{{item.payload.description}}</view>
+											<view class="gb_name oh2">{{item.payload.description}}</view>
+											<view class="gb_msg  oh1">{{'￥'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
+											<!-- <view class="gb_name oh1">{{item.payload.description}}</view>
 											<view class="gb_msg oh1">{{'自定义参数1:'+getarg(item.payload.extension,'a',item.payload.data)}}</view>
 											<view class="gb_msg oh1">{{'自定义参数2:'+getarg(item.payload.extension,'a1',item.payload.data)}}</view>
-											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view>
+											<view class="gb_msg oh1">{{'自定义参数3:'+getarg(item.payload.extension,'a2',item.payload.data)}}</view> -->
 										</view>
-									</view>
+									</a>
 								</view>
 							</view>
 						</view>
@@ -123,7 +125,7 @@
 			<swiper class="emoji-swiper" :class="{hidden:hideEmoji}" indicator-dots="true" duration="150">
 				<swiper-item v-for="(page,pid) in emojiList" :key="pid">
 					<view v-for="(em,eid) in page" :key="eid" @tap="addEmoji(em)">
-						<image mode="widthFix" :src="'/static/img/emoji/'+em.url"></image>
+						<image mode="widthFix" :src="imgIP('/static_s/51daiyan/img/emoji/'+em.url)"></image>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -139,9 +141,9 @@
 					<view class="box" @tap="handRedEnvelopes">
 						<view class="icon hongbao"></view>
 					</view>
-					<view class="box" @tap="customModal">
+					<!-- <view class="box" @tap="customModal">
 						<view class="iconfont icon-zidingyi"></view>
-					</view>
+					</view> -->
 				</view>
 			</view>
 		</view>
@@ -223,11 +225,21 @@
 </template>
 <script>
 	import userList from '../../commen/tim/user.js'
-	import {mapState} from "vuex";
+	import service from '../../service.js';
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	
 	export default {
 		data() {
 			return {
+				IPurl_url:'http://51daiyan.com.aa.800123456.top/',
+				msg_type:1,   //客服  2
+				goods_id:'',
+				goods_name:'',
+				goods_img:'',
+				goods_pri:'',
 				//TIM变量
 				conversationActive:null,
 				toUserId:'',
@@ -295,7 +307,7 @@
 				customExtension: '',
 				focusedInput: '',
 				
-				
+				isFocus:'',
 				isShow: false,
 			};
 		},
@@ -311,18 +323,21 @@
 			},
 		},
 		onLoad(option) {
-		
+			
+			
 			this.userInfo = JSON.parse(uni.getStorageSync('userInfo'))
 			this.toUserId = this.$store.state.toUserId
+			console.log('toUserId===============>'+this.toUserId)
 			this.conversationActive = this.$store.state.conversationActive
 			this.TIM = this.$TIM
 			//获取聊天对象的用户信息---有后端的情况这里 使用后端api请求、
+			this.getmsg()
 			//防止初次聊天的时候 没有对方的基础信息
-			userList.forEach(item=>{
-				if(this.toUserId == item.userId){
-					this.toUserInfo = item
-				}
-			})
+			// userList.forEach(item=>{
+			// 	if(this.toUserId == item.userId){
+			// 		this.toUserInfo = item
+			// 	}
+			// })
 			this.getMsgList();
 			//语音自然播放结束
 			this.AUDIO.onEnded((res)=>{
@@ -363,6 +378,42 @@
 			uni.stopPullDownRefresh();
 		},
 		methods:{
+			imgIP(img){
+				if(!img){
+					return
+				}
+				if(img.indexOf('://')== -1){
+				  img = service.imgurl+img
+				}
+				// var newimg =imgip+img
+				// console.log(newimg)
+				return img
+			},
+			getmsg(){
+				var that = this
+				var datas = {
+					// token: that.loginMsg.userToken,
+					type:that.msg_type,
+					id: that.toUserId
+				}
+				
+				// 单个请求
+				service.P_get('/getTx', datas).then(res => {
+					console.log(res)
+					if (res.code == 1) {
+						that.toUserInfo = res.data
+						uni.setNavigationBarTitle({
+							title:res.data.name
+						})
+					}
+				}).catch(e => {
+					console.log(e)
+					uni.showToast({
+						icon: 'none',
+						title: '获取对方数据失败'
+					})
+				})
+			},
 			gettime1(idx){
 				if(idx<0){
 					return
@@ -640,8 +691,9 @@
 							if(EM.alt==item){
 								//在线表情路径，图文混排必须使用网络路径，请上传一份表情到你的服务器后再替换此路径 
 								//比如你上传服务器后，你的100.gif路径为https://www.xxx.com/emoji/100.gif 则替换onlinePath填写为https://www.xxx.com/emoji/
-								let onlinePath = 'https://s2.ax1x.com/2019/04/12/'
-								let imgstr = '<img class="emoji_i" src="'+onlinePath+this.onlineEmoji[EM.url]+'">';
+								let onlinePath = 'http://51daiyan.test.upcdn.net/static_s/51daiyan/img/emoji/'
+								// let imgstr = '<img class="emoji_i" src="'+onlinePath+this.onlineEmoji[EM.url]+'">';
+								let imgstr = '<img class="emoji_i" src="'+onlinePath+EM.url+'">';
 								console.log("imgstr: " + imgstr);
 								return imgstr;
 							}
@@ -881,22 +933,31 @@
 			},
 			customModal () {
 				var that=this
+				// uni.showActionSheet({
+				//     itemList: ['A', 'B', 'C'],
+				//     success: function (res) {
+				//         console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
+				//     },
+				//     fail: function (res) {
+				//         console.log(res.errMsg);
+				//     }
+				// });
 			  uni.showModal({
 			      title: '提示',
-			      content: '是否发送自定义消息',
+			      content: '是否发送此商品',
 			      success: function (res) {
 			          if (res.confirm) {
 			              console.log('用户点击确定');
 										var ext={
-											a:'a',
+											a:that.goods_pri,
 											a1:'a1',
-											a2:'/pages/index/index',
-											a3:'http://119.90.34.147:8080/finance/img/system/touxiang.jpg',
+											a2:that.goods_id,
+											a3:service.imgurl+that.goods_img,
 										}
 										ext=JSON.stringify(ext)
 										var msg={
 											data:'custom_good',
-											description:'自定义消息的说明字段',
+											description:that.goods_name,
 											extension:ext
 										}
 										that.sendMsg(msg,'custom')
@@ -946,26 +1007,48 @@
 		padding-bottom: 100upx;
 	}
 	.chat_box{
-		width: 400upx;
+		width:600px;
+		max-width: 100%;
 		display: flex;
+		text-decoration: none;
 	}
 	.chat_img{
-		width: 120upx;
-		height: 120upx;
-		margin-right: 20upx;
+		width: 100px;
+		height: 100px;
+		margin-right: 10px;
 	}
 	.chat_msg{
 		display: flex;
 		flex-direction: column;
+		justify-content: space-between;
+		flex: 1;
 	}
 	.gb_name{
-		font-size: 28upx;
+		font-size: 26px;
+		color: #333;
+		text-decoration: none;
 	}
 	.gb_msg{
-		font-size: 22upx;
+		font-size: 20px;
+		color: #333;
+		text-decoration: none;
 	}
 	.ltbox_div{
 		line-height: 45upx;
+	}
+	.username{
+		position: relative;
+		height: 1rpx!important;
+	}
+	.username .time{
+		position: absolute;
+		top: -40upx;
+		left: 0;
+		right: 0;
+		text-align: center;
+		padding-right: 130rpx;
+		font-size: 16px;
+	
 	}
 	.emoji_i{
 		height: 40upx;

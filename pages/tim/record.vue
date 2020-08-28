@@ -1,21 +1,13 @@
 <template>
 	<view>
-		<view class="user-box">
-			<view class="nav-tab">
-				<view :class="isActive ==0 ?'tab-item-active tab-item': 'tab-item'" @click="changeTabBtn(0)">聊天记录</view>
-				<view :class="isActive ==1 ?'tab-item-active tab-item1': 'tab-item1'" @click="changeTabBtn(1)">好友列表</view>
-				<view class="out-login" @click="outLoginBtn()"> 注 销</view>
-
-				<view class="clear-box"></view>
-			</view>
-		</view>
 		<!-- 聊天记录 会话列表 -->
 		<view class="conversition-box" v-if="isActive ==0">
 			<view class="list-box" v-if="conversationList && conversationList.length>0">
 				<view v-for="(item,index) in conversationList" :key="index" @click="toRoom(item)">
 					<view class="item-box">
 						<view class="item-img">
-							<img :src="item.userProfile.avatar" alt="">
+							<img v-if="item.userProfile.avatar" :src="imgIP(item.userProfile.avatar)" alt="">
+							<img v-else :src="imgIP('/static_s/51daiyan/images/mr_tx.jpg')" alt="">
 						</view>
 						<view class="item-text">
 							<view class="item-user">
@@ -37,26 +29,12 @@
 
 
 			<view class="list-box" v-else>
-				<span class="msg-box">暂无聊天记录，请选择好友进行聊天</span>
+				<span class="msg-box">暂无聊天记录</span>
 			</view>
 		</view>
 
 
-		<!-- 好友列表 -->
-		<view class="user-box" v-if="isActive ==1">
-			<view class="list-box">
-				<view class="user-item-box" v-for="(item,index) in friendList" :key="index" @click="checkUserToRoom(item)">
-					<view class="user-img">
-						<image :src="item.img" alt=""></image>
-					</view>
-					<view class="user-name">
-						{{item.user}}
-					</view>
-				</view>
-			</view>
 
-			<view class="btn" style="margin-top: 40rpx;"><button type="default" @click="createGroup()">创建群组</button></view>
-		</view>
 
 	</view>
 </template>
@@ -75,8 +53,96 @@
 				isActive: 0, //默认聊天记录
 			}
 		},
+		onLoad(option) {
+			console.log(option.id)
+			console.log(option.im)
+			let promise = this.tim.login({
+				// userID: 'dy100002',
+				userID: option.id,
+				// userSig: 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwimVhgZAYASVK07JTiwoyExRsjI0MTAwtjAyMDeByKRWFGQWpQLFTU1NjYA6IKIlmblgMUsLE0tDCxOoaHFmOtDoGP2gEFdf84ykTM*0rLwo9yr3NEsnz4oUM1*ToDTt4kqn8HK35KDStHTLkGRbpVoAdtkx5g__'
+				userSig: option.im
+			});
+			promise.then((res) => {
+				console.log(res)
+				//登录成功后 更新登录状态
+				this.$store.commit("toggleIsLogin", true);
+				//自己平台的用户基础信息
+				var userInfo = {
+					"id": 2,
+					"userToken": "321ae3e5779b98239cc7b9e083b3432f",
+					"phone": "",
+					"nickname": option.nickname,
+					"money": "500.15",
+					"advocacy_bean": "3777.00",
+					"stay_entry_money": "2.65",
+					"yet_entry_money": "1.65",
+					"yet_withdraw_money": "0.00",
+					"identification_id": "dy100002",
+					"IMSign": "eJwtjMEOgjAQBf9lz0a3pbSUxINevJhAqNGLF5OtuFERgShi-HcJ8G5vJpkv7LZu-vIVxCDnCLPhM-mi4TMPmD4C*8nJ1XQ9lSUTxEIhBpFEo0bj25IrD7FGFSGOrOF7T0RojTXCCDs1OO-DRRgcsuMio8RV8qJzR3Vnw01a*7Wmpg2Sm*v2Sj*e6Xu1hN8fIjcxZQ__",
+					"advocacy_grade_value": "0",
+					"introduction": option.introduction,
+					"sex": "1735660800",
+					"birthday": "1994-08-10",
+					"province": "北京市",
+					"city": "北京市",
+					"county": "东城区",
+					"auth_status": 3,
+					"auth_cause": "",
+					"school_data": {
+						"school": "北京大学",
+						"department": "超级院系",
+						"entrance_time": "2020-08-10"
+					},
+					"identity_id": 2,
+					"identity_name": "达人",
+					"real_name": "李长寿",
+					"id_number": "142625199406223999",
+					"id_number_front": "/resource/api/img/20200804/3baeb324ac053003f97012a0797643d3.jpg",
+					"id_number_contrary": "/resource/api/img/20200804/60c7c73798d5845e1352553284188a08.jpg",
+					"start_validity": "2000-01-01",
+					"end_validity": "2029-01-01",
+					"weibo_account": "111",
+					"douyin_account": "2222",
+					"kuaishou_account": "3333",
+					"avatarurl":option.avatarurl,
+					"advocacy_goods_number": 8,
+					"follow_buy_goods_number": 1,
+					"exceed_number": 0,
+					"public_benefit_number": 3
+				}
+
+				uni.setStorageSync('userInfo', JSON.stringify(userInfo))
+				//tim 返回的用户信息
+				uni.setStorageSync('userTIMInfo', JSON.stringify(res.data))
+				console.log('userTIMInfo========>' + JSON.stringify(res.data))
+
+			}).catch((err) => {
+				console.warn('login error:', err); // 登录失败的相关信息
+			});
+		},
 		onShow() {
-			uni.hideHomeButton()
+			console.log('onShow=======================================>')
+			// uni.hideHomeButton()
+			if (this.isSDKReady) {
+				console.log('isSDKReady=======================================>onShow')
+				this.getConversationList()
+			} else {
+				console.log('!isSDKReady=======================================>onShow')
+				uni.stopPullDownRefresh();
+			}
+		},
+		
+		/**
+		 * 页面相关事件处理函数--监听用户下拉动作
+		 */
+		onPullDownRefresh: function() {
+			if (this.isSDKReady) {
+				console.log('isSDKReady=======================================>onPullDownRefresh')
+				this.getConversationList()
+			} else {
+				console.log('!isSDKReady=======================================>onPullDownRefresh')
+				uni.stopPullDownRefresh();
+			}
 		},
 		computed: {
 			...mapState({
@@ -88,6 +154,8 @@
 		watch: {
 			isSDKReady(val) {
 				//isSDKReady == true 
+				console.log('updateUserInfo==========================================================>isSDKReady')
+				console.log(val)
 				if (val) {
 					//更新用户自己的基础资料（头像+昵称+个性签名）
 					this.updateUserInfo()
@@ -99,6 +167,17 @@
 
 		},
 		methods: {
+			imgIP(img){
+				if(!img){
+					return
+				}
+				if(img.indexOf('://')== -1){
+				  img = service.imgurl+img
+				}
+				// var newimg =imgip+img
+				// console.log(newimg)
+				return img
+			},
 			createGroup() {
 				let promise = this.tim.createGroup({
 					type: this.$TIM.TYPES.GRP_PUBLIC,
@@ -140,19 +219,24 @@
 			//提交用户的基础信息到Im
 			updateUserInfo() {
 				//将已经登陆的用户信息 提交到IM中
-				let userInfo = JSON.parse(uni.getStorageSync('userInfo'))
-				let promise = this.tim.updateMyProfile({
-					nick: userInfo.user,
-					avatar: userInfo.img,
-					gender: this.$TIM.TYPES.GENDER_MALE,
-					selfSignature: '暂无个性签名',
-					allowType: this.$TIM.TYPES.ALLOW_TYPE_ALLOW_ANY
-				});
-				promise.then((res) => {
-					console.log('提交资料成功')
-				}).catch((err) => {
-					console.warn('updateMyProfile error:', imError); // 更新资料失败的相关信息
-				});
+				console.log('updateUserInfo======================================================>')
+				console.log(uni.getStorageSync('userInfo'))
+				if(uni.getStorageSync('userInfo')){
+					var  datamsg=uni.getStorageSync('userInfo')
+					let userInfo = JSON.parse(datamsg)
+					let promise = this.tim.updateMyProfile({
+						nick: userInfo.nickname,
+						avatar: userInfo.avatarurl,
+						gender: this.$TIM.TYPES.GENDER_MALE,
+						selfSignature: userInfo.introduction,
+						allowType: this.$TIM.TYPES.ALLOW_TYPE_ALLOW_ANY
+					});
+					promise.then((res) => {
+						console.log('提交资料成功')
+					}).catch((err) => {
+						console.warn('updateMyProfile error:', err); // 更新资料失败的相关信息
+					});
+				}
 			},
 			//聊天的节点加上外层的div
 			nodesFliter(str) {
@@ -171,6 +255,7 @@
 				// 拉取会话列表
 				let promise = this.tim.getConversationList();
 				promise.then((res) => {
+					uni.stopPullDownRefresh();
 					let conversationList = res.data.conversationList; // 会话列表，用该列表覆盖原有的会话列表
 					if (conversationList.length) {
 
@@ -179,6 +264,7 @@
 						this.$store.commit("updateConversationList", conversationList);
 					}
 				}).catch((err) => {
+					uni.stopPullDownRefresh();
 					console.warn('getConversationList error:', err); // 获取会话列表失败的相关信息
 				});
 			},
@@ -197,80 +283,59 @@
 			}
 
 		},
-		onShow() {
-			if (this.isSDKReady) {
-				console.log('2222')
-				this.getConversationList()
-			} else {
-				console.log('333333')
-			}
-		},
-		onLoad() {
-			console.log('...')
-			console.log(this.conversationList)
-			let userInfo = JSON.parse(uni.getStorageSync('userInfo'))
-			this.friendList = []
-			userList.forEach(item => {
-				if (item.userId != userInfo.userId) {
-					console.log(item)
-					this.friendList.push(item)
-				}
-			})
-
-		}
 	}
 </script>
 
 <style scoped lange="scss">
 	.list-box {
 		width: 94%;
-		margin: 40rpx auto;
+		margin: 20px auto;
 	}
 
 	.item-box {
 		width: auto;
-		height: 130rpx;
-		padding: 20rpx;
+		height: 60px;
+		padding: 10px;
 		overflow: hidden;
 		border-bottom: 1px solid #eee;
 	}
 
 	.item-img {
 		float: left;
-		margin-top: 20rpx;
-		width: 80rpx;
-		height: 80rpx;
+		/* margin-top: 10px; */
+		width: 60px;
+		height: 60px;
 	}
 
 	.item-img img {
-		width: 80rpx;
-		height: 80rpx;
+		width: 100%;
+		height: 100%;
 	}
 
 	.item-text {
 		float: left;
-		margin-left: 30rpx;
+		margin-left: 15px;
 		width: 500rpx;
-		height: 100rpx;
+		height: 60px;
 		color: #666;
 		font-size: 28rpx;
 	}
 
 	.item-user {
 		width: auto;
-		height: 60rpx;
-		line-height: 60rpx;
-		color: 333;
-		font-size: 32rpx;
+		height: 30px;
+		line-height: 30px;
+		color: #333;
+		font-size: 18px;
 
 	}
 
 	.item-text-info {
 		width: auto;
-		height: 60rpx;
-		line-height: 60rpx;
+		height: 30px;
+		line-height: 30px;
 		color: #666;
-		font-szie: 24rpx;
+		font-size: 14px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -278,7 +343,7 @@
 
 	.user-box {
 		width: auto;
-		height: 80rpx;
+		height: 40px;
 		padding: 0 20rpx;
 	}
 
@@ -319,9 +384,11 @@
 	}
 
 	.msg-box {
-		line-height: 30rpx;
-		font-size: 28rpx;
+		width: 100%;
+		line-height: 20px;
+		font-size: 14px;
 		color: #666;
+		text-align: center;
 	}
 
 	.user-item-box {
@@ -364,15 +431,15 @@
 	}
 
 	.item-msg-icon {
-		width: 40rpx;
-		height: 40rpx;
+		width: 20px;
+		height: 20px;
 		border-radius: 50%;
 		background: #f06c7a;
 		color: #fff;
-		line-height: 40rpx;
-		margin-top: 30rpx;
+		line-height: 20px;
+		margin-top: 15px;
 		text-align: center;
-		font-size: 24rpx;
+		font-size: 12px;
 	}
 
 	.clear-box {
